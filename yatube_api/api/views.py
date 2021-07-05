@@ -1,12 +1,12 @@
-from rest_framework import filters, viewsets, serializers, status
-from rest_framework.response import Response
+from rest_framework import filters, viewsets
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
 
 from django.shortcuts import get_object_or_404
 
-from .models import Comment, Follow, Group, Post, User
+from .models import Follow, Group, Post, User
 from .permissions import IsAuthorPermission
-from .serializers import CommentSerializer, FollowSerializer, GroupSerializer, PostSerializer
+from .serializers import (CommentSerializer, FollowSerializer,
+                          GroupSerializer, PostSerializer)
 
 PERMISSION_CLASSES = (IsAuthenticatedOrReadOnly, IsAuthorPermission,)
 
@@ -61,6 +61,4 @@ class FollowViewSet(viewsets.ModelViewSet):
         return queryset
 
     def perform_create(self, serializer):
-        print(f'hehe {self.request.user}')
         serializer.save(user=self.request.user)
-
