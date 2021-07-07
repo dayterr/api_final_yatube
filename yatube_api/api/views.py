@@ -4,11 +4,11 @@ from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from django.shortcuts import get_object_or_404
 
 from .models import Follow, Group, Post, User
-from .permissions import IsAuthorPermission
+from .permissions import IsAuthorPermissionOrReadOnly
 from .serializers import (CommentSerializer, FollowSerializer,
                           GroupSerializer, PostSerializer)
 
-PERMISSION_CLASSES = (IsAuthenticatedOrReadOnly, IsAuthorPermission,)
+PERMISSION_CLASSES = (IsAuthenticatedOrReadOnly, IsAuthorPermissionOrReadOnly)
 
 
 class PostViewSet(viewsets.ModelViewSet):
@@ -43,20 +43,16 @@ class CommentViewSet(viewsets.ModelViewSet):
 class GroupViewSet(viewsets.ModelViewSet):
     queryset = Group.objects.all()
     serializer_class = GroupSerializer
-    permission_classes = PERMISSION_CLASSES
-
-    def perform_create(self, serializer):
-        serializer.save()
+    permission_classes = (IsAuthenticatedOrReadOnly,)
 
 
 class FollowViewSet(viewsets.ModelViewSet):
-    queryset = Follow.objects.all()
     serializer_class = FollowSerializer
     filter_backends = (filters.SearchFilter,)
-    search_fields = ['following__username', 'user__username', ]
+    search_fields = ('user__username',)
 
     def get_queryset(self):
-        user = get_object_or_404(User, pk=self.request.user.pk)
+        user = User.objects.get(pk=self.request.user.pk)
         queryset = user.following.all()
         return queryset
 
