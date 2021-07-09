@@ -17,6 +17,6 @@ router_v1.register('follow',
 
 urlpatterns = [
     path('v1/', include(router_v1.urls)),
-    path('api/v1/token/', jwt_views.TokenObtainPairView.as_view()),
-    path('api/v1/token/refresh/', jwt_views.TokenRefreshView.as_view())
+    path('v1/token/', jwt_views.TokenObtainPairView.as_view()),
+    path('v1/token/refresh/', jwt_views.TokenRefreshView.as_view())
 ]
