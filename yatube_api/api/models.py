@@ -59,3 +59,12 @@ class Follow(models.Model):
                                   related_name='following',
                                   on_delete=models.CASCADE,
                                   blank=True, null=True)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=['user', 'following'], name='unique_follow'),
+            models.CheckConstraint(
+                check=~models.Q(user=models.F('following')),
+                name='Подписчик и подписант должны быть разными людьми')
+        ]
